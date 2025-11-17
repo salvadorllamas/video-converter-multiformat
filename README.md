@@ -73,7 +73,7 @@ Descárgalo aquí:
 latest git master branch build 
 🔗 https://www.gyan.dev/ffmpeg/builds/
  
- 
+
 
 Luego descomprímelo y coloca la carpeta **ffmpeg/** en la raíz del proyecto:
 
@@ -325,7 +325,3 @@ dir ffmpeg\bin\ffmpeg.exe
 
 </div>
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 85bc1d875bcbd2ec5395678271fc3da10cf47980

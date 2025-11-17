@@ -4,6 +4,7 @@ node_modules/
 # Builds de Electron
 dist/
 build/
+ffmpeg/
 
 # Logs y archivos temporales
 *.log
