@@ -72,7 +72,8 @@ Este proyecto **no incluye FFmpeg** porque sus ejecutables superan los 100MB.
 Descárgalo aquí:
 latest git master branch build 
 🔗 https://www.gyan.dev/ffmpeg/builds/
-
+ 
+ 
 
 Luego descomprímelo y coloca la carpeta **ffmpeg/** en la raíz del proyecto:
 
