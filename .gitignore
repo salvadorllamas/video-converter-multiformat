@@ -1,0 +1,19 @@
+# Dependencias
+node_modules/
+
+# Builds de Electron
+dist/
+build/
+
+# Logs y archivos temporales
+*.log
+.tmp/
+temp/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/

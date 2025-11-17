@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Convertidor de Video Multiformato</title>
+
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: radial-gradient(circle at 50% 50%, #0f0f0f 0%, #000000 100%);
+            color: #00ff6a;
+            text-align: center;
+            margin: 30px;
+            overflow: hidden;
+        }
+
+        /* Pantalla de carga */
+        #loadingOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            flex-direction: column;
+        }
+
+        #loadingOverlay.active {
+            display: flex;
+        }
+
+        .loadingText {
+            color: #00ff6a;
+            font-size: 36px;
+            font-weight: bold;
+            text-shadow:
+                0 0 10px #00ff6a,
+                0 0 20px #00ff6a,
+                0 0 30px #00ff6a;
+            animation: pulseLoading 1.5s infinite alternate;
+        }
+
+        .loadingDots {
+            color: #00ff6a;
+            font-size: 48px;
+            margin-top: 20px;
+            animation: dotsAnimation 1.5s infinite;
+        }
+
+        @keyframes pulseLoading {
+            0% {
+                opacity: 0.7;
+                transform: scale(1);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+        }
+
+        @keyframes dotsAnimation {
+
+            0%,
+            20% {
+                content: ".";
+            }
+
+            40% {
+                content: "..";
+            }
+
+            60%,
+            100% {
+                content: "...";
+            }
+        }
+
+        .logo__wrapper {
+            position: fixed;
+            bottom: 5%;
+            right: 5%;
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(45deg, #0f0 10%, #0ff 50%, #ff0 90%);
+            border-radius: 20%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            pointer-events: auto;
+            box-shadow:
+                0 0 12px #0ff,
+                0 0 24px #ff0,
+                0 0 36px #f0f inset;
+            cursor: pointer;
+            animation: rotateWrapper 8s linear infinite;
+        }
+
+        @keyframes rotateWrapper {
+            0% {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+
+            100% {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+
+        .logo__header video {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            filter: hue-rotate(90deg) saturate(200%) contrast(1.5);
+            animation: pulseVideo 2s infinite alternate;
+        }
+
+        @keyframes pulseVideo {
+            0% {
+                transform: scale(1);
+                filter: hue-rotate(0deg);
+            }
+
+            50% {
+                transform: scale(1.1);
+                filter: hue-rotate(180deg);
+            }
+
+            100% {
+                transform: scale(1);
+                filter: hue-rotate(360deg);
+            }
+        }
+
+        h1 {
+            font-weight: 900;
+            font-size: 42px;
+            color: #00ff6a;
+            text-shadow:
+                0 0 6px #00ff6a,
+                0 0 12px #ff00ff,
+                0 0 24px #00ffff,
+                0 0 48px #ff0;
+            animation: flickerGlitch 1.5s infinite;
+        }
+
+        @keyframes flickerGlitch {
+
+            0%,
+            19%,
+            21%,
+            23%,
+            25%,
+            54%,
+            56%,
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+
+            20%,
+            22%,
+            24%,
+            55% {
+                opacity: 0.5;
+                transform: translateX(calc(-3px + 6px * var(--rand)));
+            }
+        }
+
+        button {
+            padding: 10px 20px;
+            border-radius: 50px;
+            border: 2px solid #ff0;
+            background: linear-gradient(45deg, #0f0, #0ff);
+            color: #000;
+            font-weight: bold;
+            text-shadow: 0 0 6px #ff0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            transform: scale(1.1) rotate(-2deg);
+            box-shadow: 0 0 16px #0ff, 0 0 32px #ff0 inset;
+        }
+
+        #drop {
+            border: 2px dashed #0ff;
+            padding: 40px;
+            border-radius: 16px;
+            margin: 20px auto;
+            max-width: 1100px;
+            background: radial-gradient(circle, #00110055 0%, #000000aa 100%);
+            font-size: 16px;
+            color: #00ff6a;
+            text-shadow: 0 0 8px #0ff;
+            transition: 0.25s;
+        }
+
+        #drop.dragover {
+            border-color: #ff0;
+            background: #001122cc;
+            box-shadow: 0 0 16px #ff0 inset, 0 0 32px #0ff;
+        }
+
+        #log {
+            white-space: pre-wrap;
+            text-align: left;
+            background: #000a;
+            padding: 14px;
+            border-radius: 12px;
+            margin: 20px auto;
+            max-width: 1100px;
+            height: 300px;
+            overflow: auto;
+            color: #0ff;
+            border: 2px solid #0ff55;
+            box-shadow: inset 0 0 16px #ff0, 0 0 32px #0ff;
+            font-size: 14px;
+            animation: logGlitch 1s infinite alternate;
+        }
+
+        @keyframes logGlitch {
+            0% {
+                text-shadow: 0 0 4px #0ff;
+            }
+
+            50% {
+                text-shadow: 0 0 8px #ff0, 0 0 12px #f0f;
+            }
+
+            100% {
+                text-shadow: 0 0 4px #0ff, 0 0 8px #0ff55;
+            }
+        }
+
+        #log::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #log::-webkit-scrollbar-thumb {
+            background: #0ff88;
+            border-radius: 4px;
+        }
+
+        /* ESTILOS MEJORADOS PARA EL SELECTOR CON EFECTO "FOCO ACTIVADO" */
+        .format-selector {
+            margin: 20px 0;
+            padding: 20px;
+            background: radial-gradient(circle, #002200 0%, #001100 100%);
+            border: 2px solid #0ff;
+            border-radius: 16px;
+            max-width: 1100px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            box-shadow:
+                0 0 20px #0ff55,
+                0 0 40px #0ff22,
+                inset 0 0 20px #00ff6a22;
+            animation: selectorGlow 2s infinite alternate;
+        }
+
+        @keyframes selectorGlow {
+            0% {
+                box-shadow:
+                    0 0 15px #0ff55,
+                    0 0 30px #0ff22,
+                    inset 0 0 15px #00ff6a22;
+            }
+
+            100% {
+                box-shadow:
+                    0 0 25px #0ff,
+                    0 0 50px #0ff55,
+                    inset 0 0 25px #00ff6a44;
+            }
+        }
+
+        .format-selector::before {
+            content: "🔘";
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            font-size: 24px;
+            background: linear-gradient(45deg, #0f0, #0ff);
+            border-radius: 50%;
+            padding: 5px;
+            animation: powerButton 3s infinite;
+        }
+
+        @keyframes powerButton {
+
+            0%,
+            100% {
+                filter: drop-shadow(0 0 5px #0ff);
+            }
+
+            50% {
+                filter: drop-shadow(0 0 15px #0ff) brightness(1.3);
+            }
+        }
+
+        .format-selector label {
+            font-size: 20px;
+            font-weight: bold;
+            text-shadow:
+                0 0 10px #0ff,
+                0 0 20px #0ff55;
+            margin-right: 15px;
+            color: #00ff6a;
+            display: inline-block;
+            animation: labelPulse 2s infinite alternate;
+        }
+
+        @keyframes labelPulse {
+            0% {
+                transform: scale(1);
+                text-shadow: 0 0 10px #0ff;
+            }
+
+            100% {
+                transform: scale(1.05);
+                text-shadow: 0 0 15px #0ff, 0 0 25px #0ff55;
+            }
+        }
+
+        /* ESTILOS DEL SELECT CON EFECTO ACTIVADO */
+        .format-selector select {
+            padding: 12px 45px 12px 20px;
+            border-radius: 25px;
+            border: 2px solid #ff0;
+            /* background: linear-gradient(45deg, #0f0, #0ff); */
+            color: #000;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            text-shadow: 0 0 6px #ff0;
+            transition: all 0.3s;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 16px;
+            box-shadow:
+                0 0 15px #ff0,
+                inset 0 0 10px #ffffff55;
+            animation: selectPulse 3s infinite;
+        }
+
+        @keyframes selectPulse {
+
+            0%,
+            100% {
+                box-shadow:
+                    0 0 15px #ff0,
+                    inset 0 0 10px #ffff0055;
+            }
+
+            50% {
+                box-shadow:
+                    0 0 25px #ff0,
+                    0 0 35px #ffff0055,
+                    inset 0 0 15px #ffff0088;
+            }
+        }
+
+        .format-selector select:hover {
+            transform: scale(1.05);
+            box-shadow:
+                0 0 20px #0ff,
+                0 0 40px #ff0,
+                inset 0 0 20px #ffff0088;
+        }
+
+        .format-selector select:focus {
+            outline: none;
+            border-color: #0ff;
+            box-shadow:
+                0 0 30px #0ff,
+                0 0 60px #ff0,
+                inset 0 0 25px #ffff00aa;
+            transform: scale(1.02);
+        }
+
+        /* Estilos para las opciones del select */
+        /* .format-selector select option {
+            background: linear-gradient(45deg, #001100, #002200);
+            color: #00ff6a;
+            font-weight: bold;
+            padding: 12px 20px;
+            border-bottom: 1px solid #0ff55;
+            text-shadow: 0 0 4px #00ff6a;
+        }
+
+        .format-selector select option:checked {
+            background: linear-gradient(45deg, #0f0, #0ff);
+            color: #000000;
+            text-shadow: 0 0 6px #ff0;
+        } */
+
+        /* .format-selector select option:nth-child(odd) {
+            background: linear-gradient(45deg, #001a00, #003300);
+        }
+
+        .format-selector select option:nth-child(even) {
+            background: linear-gradient(45deg, #002200, #004400);
+        } */
+
+        .format-info {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #0ff;
+            text-shadow: 0 0 8px #0ff;
+            padding: 10px;
+            background: linear-gradient(45deg, #00110055, #00220055);
+            border-radius: 8px;
+            border: 1px solid #0ff55;
+        }
+
+        .supported-formats {
+            margin-top: 15px;
+            font-size: 12px;
+            color: #00ff6a;
+            opacity: 0.9;
+            text-shadow: 0 0 4px #00ff6a;
+            padding: 8px;
+            background: #00110055;
+            border-radius: 6px;
+            border: 1px solid #00ff6a55;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Pantalla de carga -->
+    <div id="loadingOverlay">
+        <div class="loadingText">CARGANDO</div>
+        <div class="loadingDots"></div>
+    </div>
+
+    <a href="https://llamaswebs.com" target="_blank" id="websiteLink">
+        <div class="logo__wrapper">
+            <div class="logo__header">
+                <div id="mediaContainer">
+                    <video id="videoRotator" autoplay muted loop poster="../assets/icons/icon2.png">
+                        <source src="" type="video/mp4">
+                    </video>
+                </div>
+            </div>
+        </div>
+    </a>
+
+    <h1>Convertidor de Video Multiformato</h1>
+
+    <!-- Selector de formato con efecto "foco activado" -->
+    <div class="format-selector">
+        <label for="formatSelect">🎯 Formato de salida:</label>
+        <select id="formatSelect">
+            <option value="mp4">MP4 (Recomendado)</option>
+            <option value="avi">AVI</option>
+            <option value="mkv">MKV</option>
+            <option value="mov">MOV</option>
+            <option value="wmv">WMV</option>
+            <option value="webm">WEBM</option>
+            <option value="gif">GIF Animado</option>
+            <option value="mp3">MP3 (Solo audio)</option>
+            <option value="wav">WAV (Solo audio)</option>
+        </select>
+        <div class="format-info" id="formatInfo">
+            💡 Conversión universal a MP4 - Compatible con la mayoría de dispositivos
+        </div>
+        <div class="supported-formats">
+            📁 Formatos soportados: WEBM, MP4, AVI, MKV, MOV, WMV, FLV, MPEG, 3GP, OGV, MTS y más...
+        </div>
+    </div>
+
+    <div>
+        <button id="btnFolder">Seleccionar carpeta destino</button>
+        <span id="dest">Ninguna carpeta seleccionada</span>
+    </div>
+
+    <div id="drop">Arrastra tus archivos de video aquí</div>
+
+    <div id="log">Logs...</div>
+
+    <script src="background.js"></script>
+    <script src="animation.js"></script>
+    <script>
+        // Script para manejar la pantalla de carga
+        document.addEventListener('DOMContentLoaded', function () {
+            const websiteLink = document.getElementById('websiteLink');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const loadingDots = document.querySelector('.loadingDots');
+            const formatSelect = document.getElementById('formatSelect');
+            const formatInfo = document.getElementById('formatInfo');
+
+            // Información de formatos
+            const formatInfoMap = {
+                'mp4': '💡 MP4 - Compatible universal, buena calidad/compresión',
+                'avi': '🎬 AVI - Calidad sin pérdidas, archivos grandes',
+                'mkv': '🔧 MKV - Contenedor versátil, múltiples pistas',
+                'mov': '🍎 MOV - Formato QuickTime, edición profesional',
+                'wmv': '🪟 WMV - Formato Windows Media',
+                'webm': '🌐 WEBM - Web optimizado, código abierto',
+                'gif': '🔄 GIF - Animado, sin audio, ideal para memes',
+                'mp3': '🎵 MP3 - Extrae solo audio, compresión buena',
+                'wav': '🎶 WAV - Audio sin compresión, calidad máxima'
+            };
+
+            // Actualizar información del formato seleccionado
+            formatSelect.addEventListener('change', function () {
+                const selectedFormat = this.value;
+                formatInfo.textContent = formatInfoMap[selectedFormat] || '💡 Selecciona un formato de salida';
+
+                // Actualizar texto del área de drop
+                const drop = document.getElementById('drop');
+                if (selectedFormat === 'mp3' || selectedFormat === 'wav') {
+                    drop.innerHTML = 'Arrastra tus archivos de <strong>video o audio</strong> aquí';
+                } else {
+                    drop.innerHTML = 'Arrastra tus archivos de <strong>video</strong> aquí';
+                }
+            });
+
+            // Inicializar información
+            formatSelect.dispatchEvent(new Event('change'));
+
+            // Animación de puntos suspensivos
+            function animateDots() {
+                let dots = '';
+                let count = 0;
+
+                setInterval(() => {
+                    dots = '.'.repeat((count % 3) + 1);
+                    loadingDots.textContent = dots;
+                    count++;
+                }, 500);
+            }
+
+            // Iniciar animación de puntos
+            animateDots();
+
+            // Manejar clic en el enlace
+            websiteLink.addEventListener('click', function (e) {
+                // Mostrar pantalla de carga
+                loadingOverlay.classList.add('active');
+
+                // Esperar un poco antes de redirigir para que se vea la pantalla de carga
+                setTimeout(() => {
+                    // La redirección ocurrirá naturalmente por el href
+                    // Ocultar pantalla de carga después de 3 segundos por si no redirige
+                    setTimeout(() => {
+                        loadingOverlay.classList.remove('active');
+                    }, 3000);
+                }, 1000);
+            });
+
+            // También manejar cuando la página intenta descargarse
+            window.addEventListener('beforeunload', function () {
+                loadingOverlay.classList.add('active');
+            });
+        });
+    </script>
+</body>
+
+</html>

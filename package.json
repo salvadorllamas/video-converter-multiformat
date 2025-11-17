@@ -1,0 +1,71 @@
+{
+  "name": "convertidor-video-multiformato",
+  "version": "2.0.0",
+  "description": "Convertidor de video multiformato con interfaz cyberpunk",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "build-win": "electron-builder --win",
+    "build-win-dev": "electron-builder --win --publish=never",
+    "create-cert": "powershell -Command \"New-SelfSignedCertificate -Type CodeSigning -Subject 'CN=ConvertidorVideo' -TextExtension @('2.5.29.37={text}1.3.6.1.5.5.7.3.3') -CertStoreLocation 'Cert:\\CurrentUser\\My'\"",
+    "dist": "electron-builder --publish=never"
+  },
+  "keywords": [
+    "video",
+    "converter",
+    "webm",
+    "mp4",
+    "avi",
+    "mkv",
+    "gif"
+  ],
+  "author": "llamaswebs",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^22.0.0",
+    "electron-builder": "^24.0.0"
+  },
+  "dependencies": {
+    "fluent-ffmpeg": "^2.1.2"
+  },
+  "build": {
+    "appId": "com.llamaswebs.videoconverter",
+    "productName": "Convertidor Video Multiformato",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "assets/**/*",
+      "ffmpeg/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "assets",
+        "to": "assets"
+      },
+      {
+        "from": "ffmpeg",
+        "to": "ffmpeg"
+      }
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "assets/icons/icon2.png",
+      "forceCodeSigning": false,
+      "signAndEditExecutable": false,
+      "requestedExecutionLevel": "asInvoker",
+      "verifyUpdateCodeSignature": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Convertidor Video Multiformato"
+    }
+  }
+}
