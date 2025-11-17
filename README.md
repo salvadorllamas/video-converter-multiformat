@@ -65,6 +65,26 @@
 - **npm** (gestor de paquetes)
 - **Windows 10/11** (recomendado)
 
+### ⚠️ FFmpeg requerido
+
+Este proyecto **no incluye FFmpeg** porque sus ejecutables superan los 100MB.
+
+Descárgalo aquí:
+latest git master branch build 
+🔗 https://www.gyan.dev/ffmpeg/builds/
+
+
+Luego descomprímelo y coloca la carpeta **ffmpeg/** en la raíz del proyecto:
+
+/video-converter-multiformat  
+    /ffmpeg  
+        /bin  
+            ffmpeg.exe  
+            ffprobe.exe  
+            ffplay.exe  
+
+
+
 ### **🚀 Ejecución Local (Desarrollo)**
 
 ```bash
@@ -304,10 +324,3 @@ dir ffmpeg\bin\ffmpeg.exe
 
 </div>
 
-<style>
-@keyframes pulse {
-  0% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.2); opacity: 0.7; }
-  100% { transform: scale(1); opacity: 1; }
-}
-</style>
