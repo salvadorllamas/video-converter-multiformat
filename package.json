@@ -32,7 +32,7 @@
   "build": {
     "appId": "com.llamaswebs.videoconverter",
     "productName": "Convertidor Video Multiformato",
-    "copyright": "Copyright © 2023 ${author}",
+    "copyright": "Copyright © 2025 ${author}",
     "directories": {
       "output": "dist",
       "buildResources": "assets"
@@ -47,10 +47,7 @@
     "extraResources": [
       {
         "from": "assets",
-        "to": "assets",
-        "filter": [
-          "**/*"
-        ]
+        "to": "assets"
       },
       {
         "from": "ffmpeg",
