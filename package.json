@@ -32,8 +32,10 @@
   "build": {
     "appId": "com.llamaswebs.videoconverter",
     "productName": "Convertidor Video Multiformato",
+    "copyright": "Copyright © 2023 ${author}",
     "directories": {
-      "output": "dist"
+      "output": "dist",
+      "buildResources": "assets"
     },
     "files": [
       "src/**/*",
@@ -45,7 +47,10 @@
     "extraResources": [
       {
         "from": "assets",
-        "to": "assets"
+        "to": "assets",
+        "filter": [
+          "**/*"
+        ]
       },
       {
         "from": "ffmpeg",
@@ -54,7 +59,7 @@
     ],
     "win": {
       "target": "nsis",
-      "icon": "assets/icons/icon2.png",
+      "icon": "assets/icons/icon.ico",
       "forceCodeSigning": false,
       "signAndEditExecutable": false,
       "requestedExecutionLevel": "asInvoker",
@@ -65,7 +70,10 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "Convertidor Video Multiformato"
+      "shortcutName": "Convertidor Video Multiformato",
+      "installerIcon": "assets/icons/icon.ico",
+      "uninstallerIcon": "assets/icons/icon.ico",
+      "installerHeaderIcon": "assets/icons/icon.ico"
     }
   }
 }

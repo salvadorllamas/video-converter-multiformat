@@ -50,19 +50,26 @@ function createWindow() {
   const win = new BrowserWindow({
     width: 1000,
     height: 1000,
-    minWidth: 1000,
-    minHeight: 700,
+    minWidth: 500,
+    minHeight: 1000,
+    maxWidth: 1000,
+    maxHeight: 1150,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
       nodeIntegration: false,
+      devTools: false,
     },
-    resizable: false,
+    frame: true,
+    resizable: true,
     maximizable: false,
-    icon: path.join(__dirname, "..", "assets", "icons", "icon2.png"),
+    // icon: path.join(__dirname, "..", "icon.ico"),
+    icon: path.join(__dirname, "..", "assets", "icons", "icon.ico"),
   });
 
   win.loadFile(path.join(__dirname, "index.html"));
+  win.setMenuBarVisibility(false);
+  win.setMenu(null);
 
   // Opcional: abrir DevTools en desarrollo
   // if (!app.isPackaged) {
