@@ -393,29 +393,38 @@
         }
 
         /* Estilos para las opciones del select */
-        /* .format-selector select option {
-            background: linear-gradient(45deg, #001100, #002200);
-            color: #00ff6a;
-            font-weight: bold;
-            padding: 12px 20px;
-            border-bottom: 1px solid #0ff55;
-            text-shadow: 0 0 4px #00ff6a;
+        .format-selector select option {
+
+            background: #000000;
+            /* negro puro */
+            color: #00ff55;
+            /* verde hacker */
+            font-weight: 600;
+            /* padding: 12px 20px; */
+            border-bottom: 10px solid #003300;
+            text-shadow: 0 0 3px #00ff55;
         }
 
         .format-selector select option:checked {
-            background: linear-gradient(45deg, #0f0, #0ff);
-            color: #000000;
-            text-shadow: 0 0 6px #ff0;
-        } */
+            background: #00ff55;
+            /* verde brillante */
+            color: #ff0;
+            border-bottom: 10px solid #003300;
+            font-weight: bold;
+            text-shadow: none;
+        }
 
-        /* .format-selector select option:nth-child(odd) {
-            background: linear-gradient(45deg, #001a00, #003300);
+        .format-selector select option:nth-child(odd) {
+            background: #000000;
         }
 
         .format-selector select option:nth-child(even) {
-            background: linear-gradient(45deg, #002200, #004400);
-        } */
+            background: #050505;
+            /* sutil variación para que no sea tan plano */
+        }
 
+
+        /* Estilos para las opciones del select final*/
         .format-info {
             margin-top: 15px;
             font-size: 14px;

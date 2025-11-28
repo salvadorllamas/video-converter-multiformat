@@ -4,6 +4,7 @@
   "description": "Convertidor de video multiformato con interfaz cyberpunk",
   "main": "src/main.js",
   "scripts": {
+    "pack-win": "electron-packager . \"Convertidor de Video Multiformato\" --platform=win32 --arch=x64 --out=dist/ --overwrite --icon=%CD%\\assets\\icons\\icon.ico --prune=true",
     "start": "electron .",
     "build": "electron-builder",
     "build-win": "electron-builder --win",
@@ -56,11 +57,15 @@
     ],
     "win": {
       "target": "nsis",
-      "icon": "assets/icons/icon.ico",
+      "icon": "assets/icons/win/icon.ico",
       "forceCodeSigning": false,
       "signAndEditExecutable": false,
       "requestedExecutionLevel": "asInvoker",
       "verifyUpdateCodeSignature": false
+    },
+    "linux": {
+      "icon": "assets/icons/png/512x512.png",
+      "target": "AppImage"
     },
     "nsis": {
       "oneClick": false,
@@ -68,9 +73,7 @@
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "shortcutName": "Convertidor Video Multiformato",
-      "installerIcon": "assets/icons/icon.ico",
-      "uninstallerIcon": "assets/icons/icon.ico",
-      "installerHeaderIcon": "assets/icons/icon.ico"
+      "installerIcon": "assets/icons/icon.ico"
     }
   }
 }
